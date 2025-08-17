@@ -1,2 +1,8 @@
-# daosail-game-simulator
-создание игры симулятора расхождение парусных яхт
+# DAOsail Simulator
+
+Браузерная игра-симулятор правил расхождения яхт (COLREGs/RRS).
+
+## Установка
+```bash
+npm install
+npm run dev
