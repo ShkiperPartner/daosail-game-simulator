@@ -4,9 +4,8 @@ class BootScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.on('complete', () => {
-            document.getElementById('loading').style.display = 'none';
-        });
+        // Принудительно скрыть загрузку, так как нет файлов для загрузки
+        document.getElementById('loading').style.display = 'none';
     }
 
     create() {
@@ -23,31 +22,31 @@ class MenuScene extends Phaser.Scene {
         const centerX = this.cameras.main.width / 2;
         const centerY = this.cameras.main.height / 2;
 
-        this.add.text(centerX, centerY - 150, 'DAOsail Simulator', {
-            fontSize: '32px',
+        this.add.text(centerX, centerY - 120, 'DAOsail Simulator', {
+            fontSize: '28px',
             fill: '#ffffff',
             fontFamily: 'Arial'
         }).setOrigin(0.5);
 
-        this.add.text(centerX, centerY - 100, 'Правила расхождения яхт', {
-            fontSize: '18px',
+        this.add.text(centerX, centerY - 85, 'Правила расхождения яхт', {
+            fontSize: '16px',
             fill: '#4a90e2',
             fontFamily: 'Arial'
         }).setOrigin(0.5);
 
-        this.add.text(centerX, centerY - 50, 'Выберите модуль для изучения:', {
-            fontSize: '20px',
+        this.add.text(centerX, centerY - 55, 'Выберите модуль для изучения:', {
+            fontSize: '18px',
             fill: '#ffffff',
             fontFamily: 'Arial'
         }).setOrigin(0.5);
 
         // Модуль COLREGs 12
-        const module12Button = this.add.text(centerX, centerY, 'COLREGs 12: Встречные парусные суда', {
-            fontSize: '18px',
+        const module12Button = this.add.text(centerX, centerY - 20, 'COLREGs 12: Встречные парусные суда', {
+            fontSize: '16px',
             fill: '#ffffff',
             fontFamily: 'Arial',
             backgroundColor: '#27ae60',
-            padding: { x: 20, y: 10 }
+            padding: { x: 15, y: 8 }
         }).setOrigin(0.5).setInteractive();
 
         module12Button.on('pointerdown', () => {
@@ -63,12 +62,12 @@ class MenuScene extends Phaser.Scene {
         });
 
         // Модуль COLREGs 13
-        const module13Button = this.add.text(centerX, centerY + 60, 'COLREGs 13: Обгон судов', {
-            fontSize: '18px',
+        const module13Button = this.add.text(centerX, centerY + 20, 'COLREGs 13: Обгон судов', {
+            fontSize: '16px',
             fill: '#ffffff',
             fontFamily: 'Arial',
             backgroundColor: '#e67e22',
-            padding: { x: 20, y: 10 }
+            padding: { x: 15, y: 8 }
         }).setOrigin(0.5).setInteractive();
 
         module13Button.on('pointerdown', () => {
@@ -83,12 +82,175 @@ class MenuScene extends Phaser.Scene {
             module13Button.setStyle({ backgroundColor: '#e67e22' });
         });
 
+        // Модуль COLREGs 14
+        const module14Button = this.add.text(centerX, centerY + 60, 'COLREGs 14: Встречные курсы судов', {
+            fontSize: '16px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            backgroundColor: '#8e44ad',
+            padding: { x: 15, y: 8 }
+        }).setOrigin(0.5).setInteractive();
+
+        module14Button.on('pointerdown', () => {
+            this.scene.start('ScenarioScene', { moduleId: 'colregs_14' });
+        });
+
+        module14Button.on('pointerover', () => {
+            module14Button.setStyle({ backgroundColor: '#732d91' });
+        });
+
+        module14Button.on('pointerout', () => {
+            module14Button.setStyle({ backgroundColor: '#8e44ad' });
+        });
+
+        // Модуль COLREGs 15
+        const module15Button = this.add.text(centerX, centerY + 100, 'COLREGs 15: Пересечение курсов', {
+            fontSize: '16px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            backgroundColor: '#e74c3c',
+            padding: { x: 15, y: 8 }
+        }).setOrigin(0.5).setInteractive();
+
+        module15Button.on('pointerdown', () => {
+            this.scene.start('ScenarioScene', { moduleId: 'colregs_15' });
+        });
+
+        module15Button.on('pointerover', () => {
+            module15Button.setStyle({ backgroundColor: '#c0392b' });
+        });
+
+        module15Button.on('pointerout', () => {
+            module15Button.setStyle({ backgroundColor: '#e74c3c' });
+        });
+
+        // Кнопка Quiz режима
+        const quizButton = this.add.text(centerX, centerY + 150, '🎯 Режим QUIZ', {
+            fontSize: '18px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            backgroundColor: '#9b59b6',
+            padding: { x: 20, y: 10 }
+        }).setOrigin(0.5).setInteractive();
+
+        quizButton.on('pointerdown', () => {
+            // Показать меню выбора модуля для квиза
+            this.showQuizModuleSelection();
+        });
+
+        quizButton.on('pointerover', () => {
+            quizButton.setStyle({ backgroundColor: '#8e44ad' });
+            quizButton.setScale(1.05);
+        });
+
+        quizButton.on('pointerout', () => {
+            quizButton.setStyle({ backgroundColor: '#9b59b6' });
+            quizButton.setScale(1);
+        });
+
         // Информация внизу
-        this.add.text(centerX, centerY + 120, 'Для прохождения модуля нужно 80% правильных ответов', {
-            fontSize: '14px',
+        this.add.text(centerX, centerY + 200, 'Quiz режим: серия из 5 вопросов подряд', {
+            fontSize: '12px',
             fill: '#95a5a6',
             fontFamily: 'Arial'
         }).setOrigin(0.5);
+        
+        this.add.text(centerX, centerY + 220, 'Для прохождения модуля нужно 80% правильных ответов', {
+            fontSize: '11px',
+            fill: '#7f8c8d',
+            fontFamily: 'Arial'
+        }).setOrigin(0.5);
+    }
+
+    showQuizModuleSelection() {
+        // Затемняем фон
+        const overlay = this.add.rectangle(this.cameras.main.width / 2, this.cameras.main.height / 2, 
+            this.cameras.main.width, this.cameras.main.height, 0x000000, 0.8);
+
+        const centerX = this.cameras.main.width / 2;
+        const centerY = this.cameras.main.height / 2;
+
+        // Заголовок
+        const title = this.add.text(centerX, centerY - 100, 'Выберите модуль для Quiz', {
+            fontSize: '24px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            fontWeight: 'bold'
+        }).setOrigin(0.5);
+
+        // Кнопки модулей
+        const quiz12Button = this.add.text(centerX, centerY - 30, 'Quiz: COLREGs 12 - Встречные суда', {
+            fontSize: '18px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            backgroundColor: '#27ae60',
+            padding: { x: 20, y: 10 }
+        }).setOrigin(0.5).setInteractive();
+
+        quiz12Button.on('pointerdown', () => {
+            this.scene.start('ScenarioScene', { moduleId: 'colregs_12', isQuizMode: true });
+        });
+
+        const quiz13Button = this.add.text(centerX, centerY + 30, 'Quiz: COLREGs 13 - Обгон судов', {
+            fontSize: '18px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            backgroundColor: '#e67e22',
+            padding: { x: 20, y: 10 }
+        }).setOrigin(0.5).setInteractive();
+
+        quiz13Button.on('pointerdown', () => {
+            this.scene.start('ScenarioScene', { moduleId: 'colregs_13', isQuizMode: true });
+        });
+
+        const quiz14Button = this.add.text(centerX, centerY + 90, 'Quiz: COLREGs 14 - Встречные курсы', {
+            fontSize: '18px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            backgroundColor: '#8e44ad',
+            padding: { x: 20, y: 10 }
+        }).setOrigin(0.5).setInteractive();
+
+        quiz14Button.on('pointerdown', () => {
+            this.scene.start('ScenarioScene', { moduleId: 'colregs_14', isQuizMode: true });
+        });
+
+        const quiz15Button = this.add.text(centerX, centerY + 150, 'Quiz: COLREGs 15 - Пересечение курсов', {
+            fontSize: '18px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            backgroundColor: '#e74c3c',
+            padding: { x: 20, y: 10 }
+        }).setOrigin(0.5).setInteractive();
+
+        quiz15Button.on('pointerdown', () => {
+            this.scene.start('ScenarioScene', { moduleId: 'colregs_15', isQuizMode: true });
+        });
+
+        // Кнопка закрытия
+        const closeButton = this.add.text(centerX, centerY + 210, 'Отмена', {
+            fontSize: '16px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            backgroundColor: '#95a5a6',
+            padding: { x: 15, y: 8 }
+        }).setOrigin(0.5).setInteractive();
+
+        closeButton.on('pointerdown', () => {
+            overlay.destroy();
+            title.destroy();
+            quiz12Button.destroy();
+            quiz13Button.destroy();
+            quiz14Button.destroy();
+            quiz15Button.destroy();
+            closeButton.destroy();
+        });
+
+        // Hover эффекты
+        [quiz12Button, quiz13Button, quiz14Button, quiz15Button, closeButton].forEach(button => {
+            button.on('pointerover', () => button.setScale(1.05));
+            button.on('pointerout', () => button.setScale(1));
+        });
     }
 }
 
@@ -120,6 +282,8 @@ class ScenarioScene extends Phaser.Scene {
             // Если новый модуль - сбрасываем очки
             this.score = 0;
         }
+        // Поддержка Quiz режима
+        this.isQuizMode = data.isQuizMode || false;
     }
 
     async create() {
@@ -258,6 +422,240 @@ class ScenarioScene extends Phaser.Scene {
                         "answer": 0,
                         "explain": "Правильно! Правило обгона (13) имеет приоритет над правилом 'парус-мотор' (18). Обгоняющее судно всегда должно держаться в стороне.",
                         "refs": ["COLREGs §13", "COLREGs §18"]
+                    }
+                ]
+            };
+        } else if (this.moduleId === 'colregs_14') {
+            return {
+                module: {
+                    id: "colregs_14",
+                    title: "COLREGs 14: Встречные курсы судов",
+                    description: "Изучение правил расхождения судов при встречных курсах",
+                    rule: "COLREGs 14",
+                    passingScore: 80
+                },
+                scenarios: [
+                    {
+                        "id": "s201",
+                        "title": "Прямое встречное сближение",
+                        "rule": "COLREGs 14",
+                        "goal": "Вы управляете судном А и идете прямо навстречу судну B. Что должно сделать ВАШЕ судно?",
+                        "initial": {
+                            "boats": [
+                                { "id": "А (ВЫ)", "course": 0, "speed": 5, "x": 400, "y": 200, "isPlayer": true },
+                                { "id": "B", "course": 180, "speed": 5, "x": 400, "y": 400, "isPlayer": false }
+                            ],
+                            "wind": { "direction": 90, "strength": 12 }
+                        },
+                        "options": [
+                            "Изменить курс вправо",
+                            "Изменить курс влево", 
+                            "Сохранить курс"
+                        ],
+                        "answer": 0,
+                        "explain": "Правильно! При встречном сближении оба судна должны изменить курс вправо согласно COLREGs 14.",
+                        "refs": ["COLREGs §14"]
+                    },
+                    {
+                        "id": "s202", 
+                        "title": "Встречное сближение под углом",
+                        "rule": "COLREGs 14",
+                        "goal": "Вы управляете судном А и сближаетесь с судном B под небольшим углом. Что должно сделать ВАШЕ судно?",
+                        "initial": {
+                            "boats": [
+                                { "id": "А (ВЫ)", "course": 350, "speed": 4, "x": 350, "y": 200, "isPlayer": true },
+                                { "id": "B", "course": 170, "speed": 4, "x": 450, "y": 400, "isPlayer": false }
+                            ],
+                            "wind": { "direction": 45, "strength": 10 }
+                        },
+                        "options": [
+                            "Изменить курс вправо",
+                            "Изменить курс влево",
+                            "Увеличить скорость"
+                        ],
+                        "answer": 0,
+                        "explain": "Верно! Даже при небольшом угле встречи оба судна должны отклониться вправо для безопасного расхождения.",
+                        "refs": ["COLREGs §14"]
+                    },
+                    {
+                        "id": "s203",
+                        "title": "Встреча на пересекающихся курсах",
+                        "rule": "COLREGs 14", 
+                        "goal": "Вы управляете судном А. Судно B идет встречным курсом с правого борта. Что должно сделать ВАШЕ судно?",
+                        "initial": {
+                            "boats": [
+                                { "id": "А (ВЫ)", "course": 45, "speed": 5, "x": 300, "y": 300, "isPlayer": true },
+                                { "id": "B", "course": 225, "speed": 5, "x": 500, "y": 200, "isPlayer": false }
+                            ],
+                            "wind": { "direction": 270, "strength": 8 }
+                        },
+                        "options": [
+                            "Изменить курс вправо",
+                            "Изменить курс влево",
+                            "Снизить скорость"
+                        ],
+                        "answer": 0,
+                        "explain": "Правильно! При пересекающихся встречных курсах оба судна должны отклониться вправо от первоначальных курсов.",
+                        "refs": ["COLREGs §14"]
+                    },
+                    {
+                        "id": "s204",
+                        "title": "Встреча в узкости",
+                        "rule": "COLREGs 14",
+                        "goal": "Вы управляете судном А в узком проходе. Встречное судно B приближается. Что должно сделать ВАШЕ судно?",
+                        "initial": {
+                            "boats": [
+                                { "id": "А (ВЫ)", "course": 90, "speed": 3, "x": 200, "y": 300, "isPlayer": true },
+                                { "id": "B", "course": 270, "speed": 3, "x": 600, "y": 300, "isPlayer": false }
+                            ],
+                            "wind": { "direction": 0, "strength": 6 }
+                        },
+                        "options": [
+                            "Изменить курс вправо насколько позволяет узкость",
+                            "Остановиться и ждать",
+                            "Изменить курс влево"
+                        ],
+                        "answer": 0,
+                        "explain": "Верно! В узкости применяются те же правила - отклонение вправо насколько позволяют обстоятельства.",
+                        "refs": ["COLREGs §14", "COLREGs §9"]
+                    },
+                    {
+                        "id": "s205",
+                        "title": "Встреча при сильном ветре",
+                        "rule": "COLREGs 14",
+                        "goal": "Вы управляете судном А при сильном ветре. Встречное судно B на collision course. Что должно сделать ВАШЕ судно?",
+                        "initial": {
+                            "boats": [
+                                { "id": "А (ВЫ)", "course": 315, "speed": 6, "x": 300, "y": 250, "isPlayer": true },
+                                { "id": "B", "course": 135, "speed": 6, "x": 500, "y": 350, "isPlayer": false }
+                            ],
+                            "wind": { "direction": 225, "strength": 18 }
+                        },
+                        "options": [
+                            "Изменить курс вправо, несмотря на ветер",
+                            "Привестись к ветру (курс влево)",
+                            "Уменьшить парусность и ждать"
+                        ],
+                        "answer": 0,
+                        "explain": "Правильно! COLREGs 14 действует независимо от силы ветра - оба судна должны отклониться вправо для безопасного расхождения.",
+                        "refs": ["COLREGs §14"]
+                    }
+                ]
+            };
+        } else if (this.moduleId === 'colregs_15') {
+            return {
+                module: {
+                    id: "colregs_15",
+                    title: "COLREGs 15: Пересечение курсов",
+                    description: "Изучение правил пересечения курсов судов с механическим двигателем",
+                    rule: "COLREGs 15",
+                    passingScore: 80
+                },
+                scenarios: [
+                    {
+                        "id": "s301",
+                        "title": "Судно справа по борту",
+                        "rule": "COLREGs 15",
+                        "goal": "Вы управляете моторным судном А. Моторное судно B приближается справа по борту. Что должно сделать ВАШЕ судно?",
+                        "initial": {
+                            "boats": [
+                                { "id": "А (ВЫ) - мотор", "course": 0, "speed": 8, "x": 350, "y": 350, "isPlayer": true },
+                                { "id": "B - мотор", "course": 270, "speed": 8, "x": 500, "y": 250, "isPlayer": false }
+                            ],
+                            "wind": { "direction": 180, "strength": 5 }
+                        },
+                        "options": [
+                            "Уступить дорогу - изменить курс или снизить скорость",
+                            "Сохранить курс и скорость",
+                            "Подать звуковой сигнал и ждать"
+                        ],
+                        "answer": 0,
+                        "explain": "Правильно! По COLREGs 15, судно видящее другое справа по борту должно уступить дорогу.",
+                        "refs": ["COLREGs §15"]
+                    },
+                    {
+                        "id": "s302", 
+                        "title": "Парусное против моторного - судно слева",
+                        "rule": "COLREGs 15",
+                        "goal": "Вы управляете парусным судном А. Моторное судно B приближается слева по борту. Что должно сделать ВАШЕ судно?",
+                        "initial": {
+                            "boats": [
+                                { "id": "А (ВЫ)", "course": 45, "speed": 5, "x": 400, "y": 300, "isPlayer": true },
+                                { "id": "B - мотор", "course": 315, "speed": 7, "x": 300, "y": 200, "isPlayer": false }
+                            ],
+                            "wind": { "direction": 90, "strength": 10 }
+                        },
+                        "options": [
+                            "Сохранить курс - парус имеет преимущество",
+                            "Уступить дорогу моторному судну",
+                            "Изменить курс влево"
+                        ],
+                        "answer": 0,
+                        "explain": "Верно! Парусное судно имеет преимущество перед моторным (COLREGs 18). Моторное судно должно уступить дорогу.",
+                        "refs": ["COLREGs §15", "COLREGs §18"]
+                    },
+                    {
+                        "id": "s303",
+                        "title": "Парусное судно пересекает курс моторного",
+                        "rule": "COLREGs 15", 
+                        "goal": "Вы управляете моторным судном А. Парусное судно B пересекает ваш курс справа. Что должно сделать ВАШЕ судно?",
+                        "initial": {
+                            "boats": [
+                                { "id": "А (ВЫ) - мотор", "course": 0, "speed": 8, "x": 350, "y": 350, "isPlayer": true },
+                                { "id": "B - парус", "course": 270, "speed": 6, "x": 500, "y": 250, "isPlayer": false }
+                            ],
+                            "wind": { "direction": 315, "strength": 10 }
+                        },
+                        "options": [
+                            "Уступить дорогу парусному судну",
+                            "Сохранить курс - моторное судно имеет преимущество",
+                            "Подать сигнал и ждать"
+                        ],
+                        "answer": 0,
+                        "explain": "Правильно! Моторное судно должно уступить дорогу парусному (COLREGs 18), даже если парусное справа.",
+                        "refs": ["COLREGs §15", "COLREGs §18"]
+                    },
+                    {
+                        "id": "s304",
+                        "title": "Пересечение в узкости",
+                        "rule": "COLREGs 15",
+                        "goal": "Вы управляете моторным судном А в узком канале. Судно B пересекает канал справа. Что должно сделать ВАШЕ судно?",
+                        "initial": {
+                            "boats": [
+                                { "id": "А (ВЫ) - мотор", "course": 90, "speed": 4, "x": 250, "y": 300, "isPlayer": true },
+                                { "id": "B - мотор", "course": 180, "speed": 5, "x": 450, "y": 150, "isPlayer": false }
+                            ],
+                            "wind": { "direction": 0, "strength": 6 }
+                        },
+                        "options": [
+                            "Уступить дорогу насколько позволяет канал",
+                            "Сохранить курс - канал дает преимущество",
+                            "Остановиться и ждать"
+                        ],
+                        "answer": 0,
+                        "explain": "Верно! COLREGs 15 действует и в узкости - судно справа по борту имеет преимущество.",
+                        "refs": ["COLREGs §15", "COLREGs §9"]
+                    },
+                    {
+                        "id": "s305",
+                        "title": "Сомнительная ситуация пересечения",
+                        "rule": "COLREGs 15",
+                        "goal": "Вы управляете моторным судном А. Не уверены, пересекает ли судно B ваш курс справа. Что должно сделать ВАШЕ судно?",
+                        "initial": {
+                            "boats": [
+                                { "id": "А (ВЫ) - мотор", "course": 45, "speed": 6, "x": 300, "y": 300, "isPlayer": true },
+                                { "id": "B - мотор", "course": 315, "speed": 6, "x": 480, "y": 220, "isPlayer": false }
+                            ],
+                            "wind": { "direction": 135, "strength": 10 }
+                        },
+                        "options": [
+                            "Считать что судно пересекает курс и уступить дорогу",
+                            "Сохранить курс пока не станет ясно",
+                            "Подать сигнал и ждать ответа"
+                        ],
+                        "answer": 0,
+                        "explain": "Правильно! При сомнениях следует считать ситуацию пересечением курсов и уступить дорогу судну справа.",
+                        "refs": ["COLREGs §15", "COLREGs §5"]
                     }
                 ]
             };
@@ -489,48 +887,180 @@ class ScenarioScene extends Phaser.Scene {
             tack = this.determineTack(boat.course, wind.direction);
         }
         
-        // Рисуем корпус судна
+        // Рисуем корпус судна (увеличен в 1.8 раза)
+        let hull;
         if (isMotorboat) {
             // Моторное судно - прямоугольник
-            const rect = this.add.rectangle(boat.x, boat.y, 20, 12, color);
-            rect.setRotation(Phaser.Math.DegToRad(boat.course));
-            
-            // Добавляем "винт" для моторного судна
-            const propeller = this.add.circle(boat.x, boat.y, 3, 0xffffff, 0.8);
-        } else {
-            // Парусное судно - треугольник (корпус) + парус
-            const hull = this.add.triangle(boat.x, boat.y, 0, -15, -10, 10, 10, 10, color);
+            hull = this.add.rectangle(boat.x, boat.y, 36, 22, color);
             hull.setRotation(Phaser.Math.DegToRad(boat.course));
             
-            // Рисуем парус
-            this.drawSail(boat, tack, color);
+            // Добавляем "винт" для моторного судна
+            const propeller = this.add.circle(boat.x, boat.y, 5, 0xffffff, 0.8);
+            
+            // Иконка мотора
+            const motorIcon = this.add.circle(boat.x, boat.y, 3, 0xff6b6b);
+        } else {
+            // Парусное судно - треугольник (корпус) + мачта
+            hull = this.add.triangle(boat.x, boat.y, 0, -27, -18, 18, 18, 18, color);
+            hull.setRotation(Phaser.Math.DegToRad(boat.course));
+            
+            // Мачта
+            const mastLength = 35;
+            const mastX = boat.x + Math.sin(Phaser.Math.DegToRad(boat.course)) * mastLength * 0.2;
+            const mastY = boat.y - Math.cos(Phaser.Math.DegToRad(boat.course)) * mastLength * 0.2;
+            const mastEndX = boat.x + Math.sin(Phaser.Math.DegToRad(boat.course)) * mastLength * 0.8;
+            const mastEndY = boat.y - Math.cos(Phaser.Math.DegToRad(boat.course)) * mastLength * 0.8;
+            
+            const mast = this.add.line(0, 0, mastX, mastY, mastEndX, mastEndY, 0x8B4513);
+            mast.setLineWidth(3);
+            
+            // Рисуем парус с улучшенной визуализацией
+            this.drawSail(boat, tack, color, wind);
         }
         
-        // Стрелка направления движения
-        const arrowLength = 25;
+        // Стрелка направления движения (увеличена)
+        const arrowLength = 40;
         const arrowX = boat.x + Math.sin(Phaser.Math.DegToRad(boat.course)) * arrowLength;
         const arrowY = boat.y - Math.cos(Phaser.Math.DegToRad(boat.course)) * arrowLength;
         
-        const line = this.add.line(0, 0, boat.x, boat.y, arrowX, arrowY, color, 0.7);
-        line.setLineWidth(2);
+        const line = this.add.line(0, 0, boat.x, boat.y, arrowX, arrowY, color, 0.8);
+        line.setLineWidth(3);
+        
+        // Стрелка на конце линии
+        const arrowHead = this.add.triangle(arrowX, arrowY, 0, -8, -5, 5, 5, 5, color);
+        arrowHead.setRotation(Phaser.Math.DegToRad(boat.course));
         
         // Подписи
         this.drawBoatLabels(boat, tack, isMotorboat);
     }
 
-    drawSail(boat, tack, color) {
-        // Парус смещается в зависимости от галса
-        const sailOffset = tack === 'правый' ? -15 : 15;
-        const sailX = boat.x + sailOffset * Math.cos(Phaser.Math.DegToRad(boat.course + 90));
-        const sailY = boat.y + sailOffset * Math.sin(Phaser.Math.DegToRad(boat.course + 90));
+    drawSail(boat, tack, color, wind) {
+        // Улучшенная визуализация паруса с учетом ветра
+        const windAngle = wind.direction;
+        const boatAngle = boat.course;
         
-        // Рисуем парус как дугу
-        const sail = this.add.arc(sailX, sailY, 8, 0, 180, false, tack === 'правый' ? 0x87ceeb : 0xffd700, 0.6);
-        sail.setRotation(Phaser.Math.DegToRad(boat.course + (tack === 'правый' ? -30 : 30)));
+        // Рассчитываем относительный угол ветра к курсу лодки
+        let relativeWindAngle = windAngle - boatAngle;
+        while (relativeWindAngle > 180) relativeWindAngle -= 360;
+        while (relativeWindAngle < -180) relativeWindAngle += 360;
+        
+        // Определяем реальную сторону паруса на основе ветра и галса
+        let sailSide;
+        if (tack === 'правый') {
+            // На правом галсе парус справа от мачты (если смотреть с кормы)
+            sailSide = 1;
+        } else {
+            // На левом галсе парус слева от мачты
+            sailSide = -1;
+        }
+        
+        // Рассчитываем точки мачты
+        const mastBase = {
+            x: boat.x - Math.sin(Phaser.Math.DegToRad(boatAngle)) * 8,
+            y: boat.y + Math.cos(Phaser.Math.DegToRad(boatAngle)) * 8
+        };
+        
+        const mastTop = {
+            x: boat.x + Math.sin(Phaser.Math.DegToRad(boatAngle)) * 25,
+            y: boat.y - Math.cos(Phaser.Math.DegToRad(boatAngle)) * 25
+        };
+        
+        // Угол паруса относительно ветра (парус всегда отклонен от ветра)
+        let sailAngle;
+        
+        // Определяем угол паруса в зависимости от курса относительно ветра
+        if (Math.abs(relativeWindAngle) < 60) {
+            // Острый курс - парус сильно подтянут
+            sailAngle = boatAngle + (sailSide * 20);
+        } else if (Math.abs(relativeWindAngle) < 120) {
+            // Полуветер - парус средне отпущен
+            sailAngle = boatAngle + (sailSide * 35);
+        } else {
+            // Фордевинд - парус полностью отпущен
+            sailAngle = boatAngle + (sailSide * 70);
+        }
+        
+        // Точки паруса
+        const sailTip = {
+            x: mastTop.x + Math.sin(Phaser.Math.DegToRad(sailAngle)) * 28,
+            y: mastTop.y - Math.cos(Phaser.Math.DegToRad(sailAngle)) * 28
+        };
+        
+        const sailBottom = {
+            x: mastBase.x + Math.sin(Phaser.Math.DegToRad(sailAngle)) * 20,
+            y: mastBase.y - Math.cos(Phaser.Math.DegToRad(sailAngle)) * 20
+        };
+        
+        // Рисуем парус как треугольник
+        const sailColor = tack === 'правый' ? 0x87ceeb : 0xffd700;
+        const sail = this.add.polygon(0, 0, [
+            mastTop.x, mastTop.y,
+            sailTip.x, sailTip.y,
+            sailBottom.x, sailBottom.y,
+            mastBase.x, mastBase.y
+        ], sailColor, 0.8);
+        
+        // Обводка паруса
+        sail.setStrokeStyle(2, 0xffffff, 0.8);
+        
+        // Индикатор направления ветра на парусе
+        this.drawWindIndicatorOnSail(boat, wind, tack);
+        
+        return sail;
+    }
+
+    drawWindIndicatorOnSail(boat, wind, tack) {
+        // Маленькая стрелка на парусе, показывающая отношение к ветру
+        const windIndicatorX = boat.x + (tack === 'правый' ? -15 : 15);
+        const windIndicatorY = boat.y - 10;
+        
+        // Рассчитываем относительный угол ветра
+        let relativeWind = wind.direction - boat.course;
+        while (relativeWind > 180) relativeWind -= 360;
+        while (relativeWind < -180) relativeWind += 360;
+        
+        // Цвет стрелки в зависимости от угла ветра
+        let windColor;
+        if (Math.abs(relativeWind) < 45) windColor = 0xff0000; // Красный - против ветра
+        else if (Math.abs(relativeWind) > 135) windColor = 0x00ff00; // Зелёный - по ветру
+        else windColor = 0xffff00; // Жёлтый - полуветер
+        
+        const windArrow = this.add.triangle(windIndicatorX, windIndicatorY, 0, -5, -3, 3, 3, 3, windColor, 0.8);
+        windArrow.setRotation(Phaser.Math.DegToRad(wind.direction));
+    }
+
+    createInfoButton(boat, hull) {
+        // Создаём кнопку информации возле судна
+        const infoButton = this.add.circle(boat.x + 25, boat.y - 25, 10, 0x3498db, 0.8);
+        infoButton.setStrokeStyle(2, 0x2980b9);
+        
+        // Текст "i"
+        const infoText = this.add.text(boat.x + 25, boat.y - 25, 'i', {
+            fontSize: '14px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            fontWeight: 'bold'
+        }).setOrigin(0.5);
+        
+        // Делаем кнопку интерактивной
+        infoButton.setInteractive();
+        
+        // При наведении показываем информацию
+        infoButton.on('pointerover', () => {
+            infoButton.setScale(1.2);
+            this.showBoatTooltip(boat, infoButton.x, infoButton.y);
+        });
+        
+        infoButton.on('pointerout', () => {
+            infoButton.setScale(1);
+            this.hideBoatTooltip();
+        });
+        
+        return infoButton;
     }
 
     drawBoatLabels(boat, tack, isMotorboat) {
-        const labelY = boat.y + 35;
+        const labelY = boat.y + 50; // Увеличил отступ из-за больших судов
         
         // Название судна
         this.add.text(boat.x, labelY, `Судно ${boat.id}`, {
@@ -661,7 +1191,7 @@ class ScenarioScene extends Phaser.Scene {
     }
 
     createOptions() {
-        const startY = 450;
+        const startY = 500;
         const spacing = 45;
 
         this.currentScenario.options.forEach((option, index) => {
@@ -744,8 +1274,23 @@ class ScenarioScene extends Phaser.Scene {
                 });
             });
         } else {
-            // Модуль завершен, показываем результаты
-            this.showModuleResults();
+            // Квиз завершен - переходим к экрану результатов
+            const resultsButton = this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2 + 100, 'Посмотреть результаты', {
+                fontSize: '18px',
+                fill: '#ffffff',
+                fontFamily: 'Arial',
+                backgroundColor: '#27ae60',
+                padding: { x: 15, y: 8 }
+            }).setOrigin(0.5).setInteractive();
+
+            resultsButton.on('pointerdown', () => {
+                this.scene.start('QuizResultsScene', {
+                    score: this.score,
+                    totalQuestions: this.totalQuestions,
+                    moduleId: this.moduleId,
+                    moduleTitle: this.moduleData.module.title
+                });
+            });
         }
     }
 
@@ -806,12 +1351,230 @@ class ScenarioScene extends Phaser.Scene {
     }
 }
 
+// Сцена результатов Quiz
+class QuizResultsScene extends Phaser.Scene {
+    constructor() {
+        super({ key: 'QuizResultsScene' });
+    }
+
+    init(data) {
+        this.score = data.score || 0;
+        this.totalQuestions = data.totalQuestions || 5;
+        this.moduleId = data.moduleId || 'colregs_12';
+        this.moduleTitle = data.moduleTitle || 'COLREGs модуль';
+    }
+
+    create() {
+        const centerX = this.cameras.main.width / 2;
+        const centerY = this.cameras.main.height / 2;
+
+        // Заголовок
+        this.add.text(centerX, 80, 'Квиз завершён!', {
+            fontSize: '32px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            fontWeight: 'bold'
+        }).setOrigin(0.5);
+
+        // Название модуля
+        this.add.text(centerX, 120, this.moduleTitle, {
+            fontSize: '18px',
+            fill: '#4a90e2',
+            fontFamily: 'Arial'
+        }).setOrigin(0.5);
+
+        // Результат
+        const percentage = Math.round((this.score / this.totalQuestions) * 100);
+        const isPassed = percentage >= 80;
+        
+        this.add.text(centerX, centerY - 40, `Ваш результат: ${this.score} из ${this.totalQuestions}`, {
+            fontSize: '24px',
+            fill: '#ffffff',
+            fontFamily: 'Arial'
+        }).setOrigin(0.5);
+
+        this.add.text(centerX, centerY, `${percentage}%`, {
+            fontSize: '48px',
+            fill: isPassed ? '#27ae60' : '#e74c3c',
+            fontFamily: 'Arial',
+            fontWeight: 'bold'
+        }).setOrigin(0.5);
+
+        // Оценка результата
+        let resultText, resultColor;
+        if (percentage >= 90) {
+            resultText = 'Отлично! Вы отлично знаете правила!';
+            resultColor = '#27ae60';
+        } else if (percentage >= 80) {
+            resultText = 'Хорошо! Правила усвоены!';
+            resultColor = '#27ae60';
+        } else if (percentage >= 60) {
+            resultText = 'Удовлетворительно. Рекомендуем повторить материал.';
+            resultColor = '#f39c12';
+        } else {
+            resultText = 'Требуется изучение правил. Попробуйте ещё раз!';
+            resultColor = '#e74c3c';
+        }
+
+        this.add.text(centerX, centerY + 60, resultText, {
+            fontSize: '16px',
+            fill: resultColor,
+            fontFamily: 'Arial',
+            wordWrap: { width: 600 },
+            align: 'center'
+        }).setOrigin(0.5);
+
+        // Прогресс-бар
+        this.createProgressBar(centerX, centerY + 100, percentage);
+
+        // Кнопки
+        const buttonY = centerY + 160;
+        
+        // Кнопка "Повторить квиз"
+        const retryButton = this.add.text(centerX - 100, buttonY, 'Повторить квиз', {
+            fontSize: '16px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            backgroundColor: '#e67e22',
+            padding: { x: 15, y: 8 }
+        }).setOrigin(0.5).setInteractive();
+
+        retryButton.on('pointerdown', () => {
+            this.scene.start('ScenarioScene', { 
+                moduleId: this.moduleId,
+                scenarioIndex: 0,
+                score: 0,
+                isQuizMode: true 
+            });
+        });
+
+        // Кнопка "В главное меню"
+        const menuButton = this.add.text(centerX + 100, buttonY, 'Главное меню', {
+            fontSize: '16px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            backgroundColor: '#4a90e2',
+            padding: { x: 15, y: 8 }
+        }).setOrigin(0.5).setInteractive();
+
+        menuButton.on('pointerdown', () => {
+            this.scene.start('MenuScene');
+        });
+
+        // Hover эффекты
+        [retryButton, menuButton].forEach(button => {
+            button.on('pointerover', () => {
+                button.setScale(1.1);
+            });
+            button.on('pointerout', () => {
+                button.setScale(1);
+            });
+        });
+    }
+
+    createProgressBar(x, y, percentage) {
+        const barWidth = 300;
+        const barHeight = 20;
+        
+        // Фон прогресс-бара
+        const bg = this.add.rectangle(x, y, barWidth, barHeight, 0x2c3e50);
+        bg.setStrokeStyle(2, 0x34495e);
+        
+        // Заполнение прогресс-бара
+        const fillWidth = (barWidth * percentage) / 100;
+        let fillColor;
+        if (percentage >= 80) fillColor = 0x27ae60;
+        else if (percentage >= 60) fillColor = 0xf39c12;
+        else fillColor = 0xe74c3c;
+        
+        const fill = this.add.rectangle(x - barWidth/2 + fillWidth/2, y, fillWidth, barHeight, fillColor);
+        
+        // Подпись прогресса
+        this.add.text(x, y + 35, 'Прогресс изучения модуля', {
+            fontSize: '12px',
+            fill: '#95a5a6',
+            fontFamily: 'Arial'
+        }).setOrigin(0.5);
+    }
+
+    showBoatTooltip(boat, x, y) {
+        // Удаляем предыдущую подсказку, если есть
+        this.hideBoatTooltip();
+        
+        const isMotorboat = boat.id.includes('мотор') || boat.id.includes('- мотор');
+        const windDir = this.currentScenario?.initial?.wind?.direction || 0;
+        const tack = isMotorboat ? null : this.determineTack(boat.course, windDir);
+        
+        // Определяем статус движения
+        let movementStatus = 'Движется';
+        if (boat.speed === 0) movementStatus = 'Стоит на якоре';
+        else if (isMotorboat) movementStatus = 'Идёт под мотором';
+        else movementStatus = 'Идёт под парусом';
+        
+        // Определяем размер и стеснённость
+        let sizeInfo = 'Обычное судно';
+        if (boat.id.includes('большое')) sizeInfo = 'Большое судно, ограничено размерами';
+        else if (boat.id.includes('малое')) sizeInfo = 'Малое судно';
+        
+        // Рассчитываем относительный ветер
+        let relativeWind = windDir - boat.course;
+        while (relativeWind > 180) relativeWind -= 360;
+        while (relativeWind < -180) relativeWind += 360;
+        
+        let windDirection = '';
+        if (Math.abs(relativeWind) < 45) windDirection = 'Встречный ветер';
+        else if (Math.abs(relativeWind) > 135) windDirection = 'Попутный ветер';
+        else if (relativeWind > 0) windDirection = 'Ветер справа';
+        else windDirection = 'Ветер слева';
+        
+        // Создаём подсказку
+        const tooltipWidth = 220;
+        const tooltipHeight = 140;
+        const tooltipX = Math.min(x + 20, this.cameras.main.width - tooltipWidth - 10);
+        const tooltipY = Math.max(y - tooltipHeight / 2, 10);
+        
+        // Фон подсказки
+        this.tooltip = this.add.group();
+        
+        const bg = this.add.rectangle(tooltipX + tooltipWidth/2, tooltipY + tooltipHeight/2, tooltipWidth, tooltipHeight, 0x2c3e50, 0.95);
+        bg.setStrokeStyle(2, 0x3498db);
+        this.tooltip.add(bg);
+        
+        // Текст с информацией
+        const info = [
+            `Судно: ${boat.id}`,
+            `Курс: ${boat.course}°`,
+            `Скорость: ${boat.speed} узлов`,
+            `Статус: ${movementStatus}`,
+            tack ? `Галс: ${tack}` : '',
+            `${windDirection}`,
+            `Размер: ${sizeInfo}`
+        ].filter(line => line); // Убираем пустые строки
+        
+        info.forEach((line, index) => {
+            const text = this.add.text(tooltipX + 10, tooltipY + 15 + index * 18, line, {
+                fontSize: '12px',
+                fill: '#ffffff',
+                fontFamily: 'Arial'
+            });
+            this.tooltip.add(text);
+        });
+    }
+
+    hideBoatTooltip() {
+        if (this.tooltip) {
+            this.tooltip.destroy();
+            this.tooltip = null;
+        }
+    }
+}
+
 const config = {
     type: Phaser.AUTO,
     width: 800,
     height: 600,
     backgroundColor: '#1e3a5f',
-    scene: [BootScene, MenuScene, ScenarioScene],
+    scene: [BootScene, MenuScene, ScenarioScene, QuizResultsScene],
     physics: {
         default: 'arcade',
         arcade: {
