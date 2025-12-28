@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git init:*)"
+      "Bash(git init:*)",
+      "Skill(upgrade-framework)",
+      "Bash(test:*)",
+      "Bash(cat:*)",
+      "Bash(tar:*)",
+      "Bash(npm install:*)",
+      "Bash(ls:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
