@@ -302,8 +302,18 @@ class ScenarioScene extends Phaser.Scene {
             this.moduleData = await response.json();
             console.log(`Loaded module ${this.moduleId} with ${this.moduleData.scenarios.length} scenarios`);
         } catch (error) {
-            console.warn(`Could not load JSON data for ${this.moduleId}, using fallback:`, error);
-            this.moduleData = this.getFallbackData();
+            console.error(`Failed to load JSON data for ${this.moduleId}:`, error);
+
+            // Пробуем использовать fallback только для известных модулей
+            if (this.moduleId === 'colregs_12' || this.moduleId === 'colregs_13') {
+                console.warn(`Using fallback data for ${this.moduleId}`);
+                this.moduleData = this.getFallbackData();
+            } else {
+                // Для остальных модулей показываем ошибку
+                const errorMsg = error.message || 'Network error';
+                this.showErrorModal(`Ошибка: ${errorMsg}`);
+                return; // Прерываем создание сцены
+            }
         }
     }
 
@@ -778,6 +788,99 @@ class ScenarioScene extends Phaser.Scene {
                 }
             ]
         };
+    }
+
+    showErrorModal(errorMessage) {
+        // Очищаем сцену
+        this.children.removeAll();
+
+        // Затемненный фон
+        const overlay = this.add.rectangle(
+            this.cameras.main.width / 2,
+            this.cameras.main.height / 2,
+            this.cameras.main.width,
+            this.cameras.main.height,
+            0x000000,
+            0.9
+        );
+
+        const centerX = this.cameras.main.width / 2;
+        const centerY = this.cameras.main.height / 2;
+
+        // Заголовок ошибки
+        this.add.text(centerX, centerY - 80, '⚠️ Ошибка загрузки', {
+            fontSize: '28px',
+            fill: '#e74c3c',
+            fontFamily: 'Arial',
+            fontWeight: 'bold'
+        }).setOrigin(0.5);
+
+        // Сообщение об ошибке
+        this.add.text(centerX, centerY - 20, 'Не удалось загрузить данные модуля', {
+            fontSize: '18px',
+            fill: '#ffffff',
+            fontFamily: 'Arial'
+        }).setOrigin(0.5);
+
+        this.add.text(centerX, centerY + 10, `Модуль: ${this.moduleId}`, {
+            fontSize: '14px',
+            fill: '#95a5a6',
+            fontFamily: 'Arial'
+        }).setOrigin(0.5);
+
+        // Техническая информация
+        this.add.text(centerX, centerY + 40, errorMessage, {
+            fontSize: '12px',
+            fill: '#7f8c8d',
+            fontFamily: 'Arial',
+            wordWrap: { width: 600 }
+        }).setOrigin(0.5);
+
+        // Кнопка "Перезагрузить"
+        const reloadButton = this.add.text(centerX - 100, centerY + 100, 'Перезагрузить страницу', {
+            fontSize: '16px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            backgroundColor: '#e74c3c',
+            padding: { x: 20, y: 10 }
+        }).setOrigin(0.5).setInteractive();
+
+        reloadButton.on('pointerdown', () => {
+            window.location.reload();
+        });
+
+        reloadButton.on('pointerover', () => {
+            reloadButton.setStyle({ backgroundColor: '#c0392b' });
+            reloadButton.setScale(1.05);
+        });
+
+        reloadButton.on('pointerout', () => {
+            reloadButton.setStyle({ backgroundColor: '#e74c3c' });
+            reloadButton.setScale(1);
+        });
+
+        // Кнопка "Вернуться в меню"
+        const menuButton = this.add.text(centerX + 100, centerY + 100, 'Вернуться в меню', {
+            fontSize: '16px',
+            fill: '#ffffff',
+            fontFamily: 'Arial',
+            backgroundColor: '#3498db',
+            padding: { x: 20, y: 10 }
+        }).setOrigin(0.5).setInteractive();
+
+        menuButton.on('pointerdown', () => {
+            this.scene.start('MenuScene');
+        });
+
+        menuButton.on('pointerover', () => {
+            menuButton.setStyle({ backgroundColor: '#2980b9' });
+            menuButton.setScale(1.05);
+        });
+
+        menuButton.on('pointerout', () => {
+            menuButton.setStyle({ backgroundColor: '#3498db' });
+            menuButton.setScale(1);
+        });
     }
 
     loadScenario() {

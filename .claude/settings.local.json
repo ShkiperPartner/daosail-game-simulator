@@ -16,7 +16,21 @@
       "Bash(else echo \"✗ CLAUDE.md.new not found\")",
       "Bash(fi)",
       "Bash(git push:*)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(if git diff --quiet)",
+      "Bash(then echo \"CLEAN\")",
+      "Bash(else echo \"HAS_CHANGES\")",
+      "Bash(if [ -f \".claude/.framework-config\" ])",
+      "Bash(then cat .claude/.framework-config)",
+      "Bash(else echo \"No config file\")",
+      "Bash(npm run dialog:export:*)",
+      "Bash(rm:*)",
+      "Bash(if [ -d \"src\" ])",
+      "Bash(then rm -rf src)",
+      "Bash(else echo \"ℹ src/ содержит другие файлы, оставлена\")",
+      "Bash(mkdir:*)",
+      "WebFetch(domain:cdn.jsdelivr.net)",
+      "Bash(timeout 3 curl:*)"
     ],
     "deny": [],
     "ask": []
