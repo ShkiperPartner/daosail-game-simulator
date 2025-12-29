@@ -14,7 +14,9 @@
       "Bash(if [ -f \"CLAUDE.md.new\" ])",
       "Bash(then mv CLAUDE.md.new CLAUDE.md)",
       "Bash(else echo \"✗ CLAUDE.md.new not found\")",
-      "Bash(fi)"
+      "Bash(fi)",
+      "Bash(git push:*)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []
