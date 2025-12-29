@@ -8,7 +8,13 @@
       "Bash(tar:*)",
       "Bash(npm install:*)",
       "Bash(ls:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(curl:*)",
+      "Bash(if [ -f \"CLAUDE.md.new\" ])",
+      "Bash(then mv CLAUDE.md.new CLAUDE.md)",
+      "Bash(else echo \"✗ CLAUDE.md.new not found\")",
+      "Bash(fi)"
     ],
     "deny": [],
     "ask": []

@@ -488,24 +488,51 @@ EOF
 
   echo "✅ Completion log saved: $COMPLETION_LOG"
 
-  # Check if there were any errors in the log
-  if grep -q "## ⚠️ ERROR" "$COMPLETION_LOG"; then
-    echo ""
-    echo "⚠️  Errors detected during completion protocol"
-    echo "Log contains error information: $COMPLETION_LOG"
-    echo ""
+  # Check if bug reporting is enabled
+  if [ -f ".claude/.framework-config" ] && grep -q '"bug_reporting_enabled": true' ".claude/.framework-config" 2>/dev/null; then
+    # Check if there were any errors in the log
+    if grep -q "## ⚠️ ERROR" "$COMPLETION_LOG"; then
+      echo ""
+      echo "⚠️  Errors detected during completion protocol"
+      echo "Log contains error information: $COMPLETION_LOG"
+      echo ""
+    else
+      echo ""
+      echo "✓ Completion protocol executed successfully (no errors)"
+      echo ""
+    fi
 
-    # Offer to create bug report
-    read -p "Create anonymized bug report? (y/N) " -n 1 -r
+    # ALWAYS offer to create bug report (for analytics & telemetry)
+    echo "📊 Bug reporting is enabled (analytics & telemetry)"
+    read -p "Create anonymized report? (y/N) " -n 1 -r
     echo ""
 
     if [[ $REPLY =~ ^[Yy]$ ]]; then
       # Run anonymization script
       if [ -f ".claude/scripts/anonymize-report.sh" ]; then
         REPORT_FILE=$(bash .claude/scripts/anonymize-report.sh "$COMPLETION_LOG")
-        echo "✅ Bug report created: $REPORT_FILE"
+        echo "✅ Report created: $REPORT_FILE"
         echo ""
-        echo "You can submit this to: github.com/alexeykrol/claude-code-starter/issues"
+
+        # Offer to submit to GitHub automatically
+        read -p "Submit report to GitHub? (y/N) " -n 1 -r
+        echo ""
+
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+          # Submit to GitHub Issues
+          if [ -f ".claude/scripts/submit-bug-report.sh" ]; then
+            ISSUE_URL=$(bash .claude/scripts/submit-bug-report.sh "$REPORT_FILE")
+            if [ $? -eq 0 ]; then
+              echo "✅ Submitted to GitHub: $ISSUE_URL"
+            fi
+          else
+            echo "⚠️  Submit script not found"
+            echo "You can submit manually: github.com/alexeykrol/claude-code-starter/issues"
+          fi
+        else
+          echo "ℹ️  Report saved locally: $REPORT_FILE"
+          echo "You can submit later: github.com/alexeykrol/claude-code-starter/issues"
+        fi
       else
         echo "⚠️  Anonymization script not found"
         echo "Manual review needed before sharing: $COMPLETION_LOG"
@@ -518,8 +545,10 @@ fi
 **Notes:**
 - Finalizes log with completion timestamp
 - Checks for errors in log
-- Offers to create anonymized bug report if errors found
+- **ALWAYS offers to create bug report if bug reporting is enabled** (for analytics & telemetry)
+- Creates report regardless of errors (successful executions are valuable data)
 - Uses anonymization script to remove sensitive data
+- Two-step confirmation: create report → submit to GitHub
 
 ---
 
@@ -729,4 +758,4 @@ fi
    - Use normal Cold Start Protocol
 
 ---
-*Framework: Claude Code Starter v2.2.4 | Updated: 2025-12-16*
+*Framework: Claude Code Starter v2.3.1 | Updated: 2025-12-16*
