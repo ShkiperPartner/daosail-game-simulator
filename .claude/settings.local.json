@@ -30,7 +30,10 @@
       "Bash(else echo \"ℹ src/ содержит другие файлы, оставлена\")",
       "Bash(mkdir:*)",
       "WebFetch(domain:cdn.jsdelivr.net)",
-      "Bash(timeout 3 curl:*)"
+      "Bash(timeout 3 curl:*)",
+      "Bash(if [ -f \"package.json\" ])",
+      "Bash(then npm run build)",
+      "Bash(else echo \"ℹ️  No package.json - skipping build step\")"
     ],
     "deny": [],
     "ask": []
