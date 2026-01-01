@@ -980,61 +980,66 @@ class ScenarioScene extends Phaser.Scene {
         }).setOrigin(0, 0.5);
     }
 
-    drawBoat(boat, wind) {
+    drawBoat(boat, wind, allBoats) {
         const color = boat.isPlayer ? 0x27ae60 : 0x4a90e2;
         const isMotorboat = boat.id.includes('мотор') || boat.id.includes('- мотор');
-        
+
         // Определяем галс для парусных судов
         let tack = null;
         if (!isMotorboat) {
             tack = this.determineTack(boat.course, wind.direction);
         }
-        
+
         // Рисуем корпус судна (увеличен в 1.8 раза)
         let hull;
         if (isMotorboat) {
             // Моторное судно - прямоугольник
             hull = this.add.rectangle(boat.x, boat.y, 36, 22, color);
             hull.setRotation(Phaser.Math.DegToRad(boat.course));
-            
+
             // Добавляем "винт" для моторного судна
             const propeller = this.add.circle(boat.x, boat.y, 5, 0xffffff, 0.8);
-            
+
             // Иконка мотора
             const motorIcon = this.add.circle(boat.x, boat.y, 3, 0xff6b6b);
         } else {
-            // Парусное судно - треугольник (корпус) + мачта
+            // Парусное судно - треугольник (корпус) с обводкой
             hull = this.add.triangle(boat.x, boat.y, 0, -27, -18, 18, 18, 18, color);
             hull.setRotation(Phaser.Math.DegToRad(boat.course));
-            
-            // Мачта
+            hull.setStrokeStyle(2, 0xffffff, 0.3); // Тонкая белая обводка для четкости
+
+            // Мачта с улучшенным видом
             const mastLength = 35;
             const mastX = boat.x + Math.sin(Phaser.Math.DegToRad(boat.course)) * mastLength * 0.2;
             const mastY = boat.y - Math.cos(Phaser.Math.DegToRad(boat.course)) * mastLength * 0.2;
             const mastEndX = boat.x + Math.sin(Phaser.Math.DegToRad(boat.course)) * mastLength * 0.8;
             const mastEndY = boat.y - Math.cos(Phaser.Math.DegToRad(boat.course)) * mastLength * 0.8;
-            
+
             const mast = this.add.line(0, 0, mastX, mastY, mastEndX, mastEndY, 0x8B4513);
             mast.setLineWidth(3);
-            
+
+            // Тонкая обводка мачты для четкости
+            const mastOutline = this.add.line(0, 0, mastX, mastY, mastEndX, mastEndY, 0xffffff, 0.2);
+            mastOutline.setLineWidth(5);
+
             // Рисуем парус с улучшенной визуализацией
             this.drawSail(boat, tack, color, wind);
         }
-        
+
         // Стрелка направления движения (увеличена)
         const arrowLength = 40;
         const arrowX = boat.x + Math.sin(Phaser.Math.DegToRad(boat.course)) * arrowLength;
         const arrowY = boat.y - Math.cos(Phaser.Math.DegToRad(boat.course)) * arrowLength;
-        
+
         const line = this.add.line(0, 0, boat.x, boat.y, arrowX, arrowY, color, 0.8);
         line.setLineWidth(3);
-        
+
         // Стрелка на конце линии
         const arrowHead = this.add.triangle(arrowX, arrowY, 0, -8, -5, 5, 5, 5, color);
         arrowHead.setRotation(Phaser.Math.DegToRad(boat.course));
-        
-        // Подписи
-        this.drawBoatLabels(boat, tack, isMotorboat);
+
+        // Подписи с передачей массива всех судов для проверки конфликтов
+        this.drawBoatLabels(boat, tack, isMotorboat, allBoats);
     }
 
     drawSail(boat, tack, color, wind) {
@@ -1094,17 +1099,17 @@ class ScenarioScene extends Phaser.Scene {
             y: mastBase.y - Math.cos(Phaser.Math.DegToRad(sailAngle)) * 20
         };
         
-        // Рисуем парус как треугольник
+        // Рисуем парус как треугольник с улучшенной видимостью
         const sailColor = tack === 'правый' ? 0x87ceeb : 0xffd700;
         const sail = this.add.polygon(0, 0, [
             mastTop.x, mastTop.y,
             sailTip.x, sailTip.y,
             sailBottom.x, sailBottom.y,
             mastBase.x, mastBase.y
-        ], sailColor, 0.8);
-        
-        // Обводка паруса
-        sail.setStrokeStyle(2, 0xffffff, 0.8);
+        ], sailColor, 0.9); // Увеличена непрозрачность для четкости
+
+        // Обводка паруса цветом судна для визуальной связи
+        sail.setStrokeStyle(2, color, 0.6);
         
         // Индикатор направления ветра на парусе
         this.drawWindIndicatorOnSail(boat, wind, tack);
@@ -1162,48 +1167,76 @@ class ScenarioScene extends Phaser.Scene {
         return infoButton;
     }
 
-    drawBoatLabels(boat, tack, isMotorboat) {
-        const labelY = boat.y + 50; // Увеличил отступ из-за больших судов
-        
-        // Название судна
-        this.add.text(boat.x, labelY, `Судно ${boat.id}`, {
-            fontSize: '14px',
+    drawBoatLabels(boat, tack, isMotorboat, allBoats) {
+        // Базовая позиция метки
+        let labelX = boat.x;
+        let labelY = boat.y + 50;
+
+        // Проверяем конфликты с другими судами
+        if (allBoats && allBoats.length > 1) {
+            allBoats.forEach(otherBoat => {
+                if (otherBoat !== boat) {
+                    const distanceY = Math.abs(otherBoat.y - boat.y);
+                    const distanceX = Math.abs(otherBoat.x - boat.x);
+
+                    // Если суда близко друг к другу по вертикали (метки могут наложиться)
+                    if (distanceY < 85 && distanceX < 180) {
+                        // Сдвигаем метку влево или вправо
+                        const offset = 70;
+                        if (boat.x < otherBoat.x) {
+                            labelX = boat.x - offset; // Сдвиг влево
+                        } else {
+                            labelX = boat.x + offset; // Сдвиг вправо
+                        }
+                    }
+                }
+            });
+        }
+
+        // Размеры фона (компактная метка - 3 строки)
+        const bgWidth = 130;
+        const bgHeight = 48;
+
+        // Полупрозрачный фон под метку для читаемости
+        this.add.rectangle(labelX, labelY + 14, bgWidth, bgHeight, 0x1a1a2e, 0.75)
+            .setOrigin(0.5);
+
+        // Строка 1: Название судна (уже содержит "(ВЫ)" если нужно)
+        this.add.text(labelX, labelY, boat.id, {
+            fontSize: '12px',
             fill: boat.isPlayer ? '#27ae60' : '#ffffff',
             fontFamily: 'Arial',
             fontWeight: boat.isPlayer ? 'bold' : 'normal'
         }).setOrigin(0.5);
 
-        // Курс
-        this.add.text(boat.x, labelY + 18, `Курс: ${boat.course}°`, {
-            fontSize: '12px',
+        // Строка 2: Курс
+        this.add.text(labelX, labelY + 16, `Курс ${boat.course}°`, {
+            fontSize: '11px',
             fill: '#cccccc',
             fontFamily: 'Arial'
         }).setOrigin(0.5);
-        
-        // Галс для парусных или тип для моторных
+
+        // Строка 3: Галс/Тип + Скорость (компактно)
+        let thirdLine = '';
+        let thirdLineColor = '#95a5a6';
+
         if (isMotorboat) {
-            this.add.text(boat.x, labelY + 34, 'МОТОРНОЕ', {
-                fontSize: '10px',
-                fill: '#ff6b6b',
-                fontFamily: 'Arial',
-                fontWeight: 'bold'
-            }).setOrigin(0.5);
+            thirdLine = boat.speed ? `МОТОР • ${boat.speed} уз` : 'МОТОР';
+            thirdLineColor = '#ff6b6b';
         } else if (tack) {
-            const tackColor = tack === 'правый' ? '#87ceeb' : '#ffd700';
-            this.add.text(boat.x, labelY + 34, `${tack.toUpperCase()} ГАЛС`, {
-                fontSize: '10px',
-                fill: tackColor,
-                fontFamily: 'Arial',
-                fontWeight: 'bold'
-            }).setOrigin(0.5);
+            const tackSymbol = tack === 'правый' ? 'П' : 'Л';
+            thirdLine = boat.speed ? `${tackSymbol}-галс • ${boat.speed} уз` : `${tackSymbol}-галс`;
+            thirdLineColor = tack === 'правый' ? '#87ceeb' : '#ffd700';
+        } else if (boat.speed) {
+            thirdLine = `${boat.speed} уз`;
         }
-        
-        // Скорость
-        if (boat.speed) {
-            this.add.text(boat.x, labelY + 50, `${boat.speed} уз`, {
+
+        if (thirdLine) {
+            this.add.text(labelX, labelY + 32, thirdLine, {
                 fontSize: '10px',
-                fill: '#95a5a6',
-                fontFamily: 'Arial'
+                fill: thirdLineColor,
+                fontFamily: 'Arial',
+                fontWeight: isMotorboat ? 'bold' : 'normal'
             }).setOrigin(0.5);
         }
     }
@@ -1225,8 +1258,9 @@ class ScenarioScene extends Phaser.Scene {
         const boats = this.currentScenario.initial.boats;
         const wind = this.currentScenario.initial.wind;
 
+        // Передаем массив всех судов в drawBoat для интеллектуального позиционирования меток
         boats.forEach(boat => {
-            this.drawBoat(boat, wind);
+            this.drawBoat(boat, wind, boats);
         });
 
         this.drawWindIndicator(wind);

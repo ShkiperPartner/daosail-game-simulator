@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Background -->
+  <rect width="32" height="32" fill="#1a2332"/>
+
+  <!-- Boat hull (triangle) -->
+  <polygon points="16,24 10,28 22,28" fill="#27ae60"/>
+
+  <!-- Mast -->
+  <line x1="16" y1="24" x2="16" y2="8" stroke="#8B4513" stroke-width="1.5"/>
+
+  <!-- Sail -->
+  <polygon points="16,8 25,12 16,24" fill="#4a90e2" opacity="0.9"/>
+  <polygon points="16,8 25,12 16,24" fill="none" stroke="#ffffff" stroke-width="0.5" opacity="0.6"/>
+
+  <!-- Water waves -->
+  <path d="M 0,28 Q 4,30 8,28 T 16,28 T 24,28 T 32,28" stroke="#34495e" stroke-width="2" fill="none"/>
+</svg>
